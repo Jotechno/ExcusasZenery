@@ -1,23 +1,18 @@
 package com.excusaszenery.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "categories")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 
 public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idCategory;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String category_name;
-
+    @Column(nullable = false)
+    private String categoryName;
 }
