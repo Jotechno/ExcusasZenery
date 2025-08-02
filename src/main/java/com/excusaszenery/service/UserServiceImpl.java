@@ -1,11 +1,14 @@
 package com.excusaszenery.service;
 
 import com.excusaszenery.exception.ResourceNotFoundException;
+import com.excusaszenery.exception.ResourceConflictException;
+import com.excusaszenery.model.Role;
 import com.excusaszenery.model.User;
+import com.excusaszenery.repository.RoleRepository;
 import com.excusaszenery.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.excusaszenery.exception.ResourceConflictException;
+import com.excusaszenery.dto.UserRequestDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,40 +18,47 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
-    public User createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
+    public User createUser(UserRequestDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
             throw new ResourceConflictException("El email ya está en uso.");
-        } else if (userRepository.existsByUsername(user.getUsername())) {
+        } else if (userRepository.existsByUsername(dto.getUsername())) {
             throw new ResourceConflictException("El nombre de usuario ya está en uso.");
-        } else {
-            return userRepository.save(user);
         }
+
+        Role role = roleRepository.findById(dto.getRoleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado"));
+
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        user.setStatus(dto.getStatus() != null ? dto.getStatus() : true);
+        user.setRole(role);
+
+        return userRepository.save(user);
     }
 
 
     @Override
-    public User updateUser(Integer id, User newData) {
+    public User updateUser(Integer id, UserRequestDto dto) {
         return userRepository.findById(id).map(user -> {
-            if (newData.getUsername() != null)
-                user.setUsername(newData.getUsername());
-
-            if (newData.getEmail() != null)
-                user.setEmail(newData.getEmail());
-
-            if (newData.getPassword() != null)
-                user.setPassword(newData.getPassword());
-
-            if (newData.getRole() != null)
-                user.setRole(newData.getRole());
-
-            if (newData.getStatus() != null)
-                user.setStatus(newData.getStatus());
-
+            if (dto.getUsername() != null) user.setUsername(dto.getUsername());
+            if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+            if (dto.getPassword() != null) user.setPassword(dto.getPassword());
+            if (dto.getStatus() != null) user.setStatus(dto.getStatus());
+            if (dto.getRoleId() != null) {
+                Role role = roleRepository.findById(dto.getRoleId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado"));
+                user.setRole(role);
+            }
             return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
+
 
     @Override
     public boolean deleteUser(Integer id) {

@@ -1,9 +1,12 @@
 package com.excusaszenery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.excusaszenery.model.Role;
+
+import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -29,4 +32,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_role")
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Excuse> excuses;
+
 }

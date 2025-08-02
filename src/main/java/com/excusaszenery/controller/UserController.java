@@ -1,5 +1,6 @@
 package com.excusaszenery.controller;
 
+import com.excusaszenery.dto.UserRequestDto;
 import com.excusaszenery.model.User;
 import com.excusaszenery.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<User> create(@RequestBody UserRequestDto dto) {
+        return ResponseEntity.ok(userService.createUser(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Integer id, @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
+    public ResponseEntity<User> update(@PathVariable Integer id, @RequestBody UserRequestDto dto) {
+        return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 
     @DeleteMapping("/{id}")
