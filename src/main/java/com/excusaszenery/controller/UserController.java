@@ -3,6 +3,7 @@ package com.excusaszenery.controller;
 import com.excusaszenery.dto.UserRequestDto;
 import com.excusaszenery.model.User;
 import com.excusaszenery.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody UserRequestDto dto) {
+    public ResponseEntity<User> create(@Valid @RequestBody UserRequestDto dto) {
         return ResponseEntity.ok(userService.createUser(dto));
     }
 

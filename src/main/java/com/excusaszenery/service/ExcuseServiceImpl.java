@@ -43,7 +43,6 @@ public class ExcuseServiceImpl implements ExcuseService{
         excuse.setLikes(dto.getLikes() != null ? dto.getLikes() : 0);
         excuse.setDislikes(dto.getDislikes() != null ? dto.getDislikes() : 0);
         excuse.setIsPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true);
-
         return excuseRepository.save(excuse);
     }
 

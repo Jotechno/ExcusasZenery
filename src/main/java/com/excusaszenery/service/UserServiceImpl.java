@@ -7,7 +7,9 @@ import com.excusaszenery.model.User;
 import com.excusaszenery.repository.RoleRepository;
 import com.excusaszenery.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.excusaszenery.dto.UserRequestDto;
 
 import java.util.List;
@@ -20,6 +22,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+
+    //encriopador para las contraseñas
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public User createUser(UserRequestDto dto) {
@@ -35,7 +45,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setStatus(dto.getStatus() != null ? dto.getStatus() : true);
         user.setRole(role);
 
@@ -67,6 +77,11 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         throw new ResourceNotFoundException("No existe usuario con ese id.");
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override

@@ -1,5 +1,5 @@
 package com.excusaszenery.model;
-
+import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +18,9 @@ public class Excuse {
     private Integer idExcuse;
 
     @Column(nullable = false)
+    @Size(min = 10, message = "El texto de la excusa debe tener mínimo 10 caracteres")
+    @Size(max = 500, message = "El texto de la excusa no debe exceder 500 caracteres")
+    @NotBlank(message = "El texto de la excusa es obligatorio")
     private String excuseText;
 
     private Integer likes = 0;

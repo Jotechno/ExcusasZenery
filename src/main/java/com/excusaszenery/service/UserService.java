@@ -13,4 +13,5 @@ public interface UserService {
     Optional<User> getUserById(Integer id);
     List<User> getAllUsers();
     boolean toggleUserStatus(Integer id);
+    Optional<User> findByEmail(String email);
 }
